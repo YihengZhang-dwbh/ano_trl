@@ -20,6 +20,7 @@ from .judges import (
     BaseRankJudge,
     HfPairwiseJudge,
     OpenAIPairwiseJudge,
+    DeepSeekPairwiseJudge,
     PairRMJudge,
 )
 
@@ -32,5 +33,6 @@ __all__ = [
     "BaseRankJudge",
     "HfPairwiseJudge",
     "OpenAIPairwiseJudge",
+    "DeepSeekPairwiseJudge",
     "PairRMJudge",
 ]
