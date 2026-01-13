@@ -17,14 +17,14 @@ from .modeling_value_head import (
     AutoModelForSeq2SeqLMWithValueHead,
     PreTrainedModelWrapper,
 )
-from .ano_config import ANOConfig
-from .ano_trainer import ANOTrainer
+from .spo_config import SPOConfig
+from .spo_trainer import SPOTrainer
 
 
 __all__ = [
     "AutoModelForCausalLMWithValueHead",
     "AutoModelForSeq2SeqLMWithValueHead",
     "PreTrainedModelWrapper",
-    "ANOConfig",
-    "ANOTrainer",
+    "SPOConfig",
+    "SPOTrainer",
 ]
