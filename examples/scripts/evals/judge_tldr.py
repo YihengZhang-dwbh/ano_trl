@@ -97,7 +97,10 @@ if __name__ == "__main__":
     model_completions = [output.outputs[0].text.strip() for output in outputs]
 
     # Judge the outputs
-    if "gpt" in script_args.judge_model:
+    if "deepseek" in script_args.judge_model:
+        # 强制指定 base_url
+        judge = OpenAIPairwiseJudge(script_args.judge_model, base_url="https://api.deepseek.com/v1")
+    elif "gpt" in script_args.judge_model:
         judge = OpenAIPairwiseJudge(script_args.judge_model)
     else:
         judge = HfPairwiseJudge(script_args.judge_model)
