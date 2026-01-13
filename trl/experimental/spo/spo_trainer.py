@@ -829,7 +829,7 @@ class SPOTrainer(BaseTrainer):
                             ratio = torch.exp(logprobs_diff)
                             
                             # [OPTIMIZED CALL]
-                            pg_loss_max = -(mb_advantages * ratio - torch.abs(mb_advantage) * torch.pow(ratio - 1, 2) / (2 * args.cliprange)).mean()
+                            pg_loss_max = -(mb_advantage * ratio - torch.abs(mb_advantage) * torch.pow(ratio - 1, 2) / (2 * args.cliprange)).mean()
                             
                             pg_losses = -mb_advantage * ratio
                             pg_losses2 = -mb_advantage * torch.clamp(ratio, 1.0 - args.cliprange, 1.0 + args.cliprange)
