@@ -19,7 +19,6 @@ from abc import ABC, abstractmethod
 import numpy as np
 from accelerate import Accelerator
 from huggingface_hub import InferenceClient
-from packaging.version import Version
 from transformers.utils import is_openai_available
 
 from ...import_utils import is_llm_blender_available
@@ -52,26 +51,6 @@ Here are the unordered outputs from the models. Each output is associated with a
 
 Evaluate the models on the basis of the quality and relevance of their results, and select the model that generated the best result. Reply with the identifier of the best model. Our evaluation will only take into account the first character of your answer, so make sure it contains only one of the identifiers and nothing else (no quotation marks, no spaces, no new lines, ...).
 '''
-
-
-def _ensure_llm_blender_importable() -> None:
-    """
-    Pre-import shim to work around a known `llm-blender` issue.
-
-    As of `llm-blender` v0.0.2 (see upstream issue: https://github.com/yuchenlin/LLM-Blender/issues/33), importing
-    `llm_blender` may fail on `transformers` >= 5.0.0.dev0 because it unconditionally accesses
-    `transformers.utils.hub.TRANSFORMERS_CACHE`.
-
-    We set this attribute to a dummy value before importing `llm_blender` so that the import succeeds. This helper is
-    intentionally a no-op on older `transformers` versions.
-
-    This shim can be removed once the upstream issue is fixed and the minimum required `llm-blender` version includes
-    that fix.
-    """
-    import transformers.utils.hub
-
-    if Version(transformers.__version__) >= Version("5.0.0.dev0"):
-        transformers.utils.hub.TRANSFORMERS_CACHE = None  # unused; just needs to exist
 
 
 class BaseJudge(ABC):
@@ -227,7 +206,6 @@ class PairRMJudge(BasePairwiseJudge):
     def __init__(self):
         if not is_llm_blender_available():
             raise ValueError("llm-blender is not installed. Please install it with `pip install llm-blender`.")
-        _ensure_llm_blender_importable()
         import llm_blender
 
         self.blender = llm_blender.Blender()
@@ -383,6 +361,82 @@ class OpenAIPairwiseJudge(BasePairwiseJudge):
 
         self.client = OpenAI()
         self.model = model
+        self.system_prompt = system_prompt or DEFAULT_PAIRWISE_SYSTEM_PROMPT
+        self.max_requests = max_requests
+        self.num_requests = 0
+        self._warned = False
+
+    def judge(self, prompts: list[str], completions: list[list[str]], shuffle_order: bool = True) -> list[int]:
+        # Check if the limit of requests is reached, if so, use random choice instead
+        if self.max_requests is not None and self.num_requests >= self.max_requests:
+            if not self._warned:  # Print the warning only once
+                logging.warning(
+                    f"Reached the maximum number of requests ({self.max_requests}). From now on, returning -1 instead. "
+                    " To increase the limit, set `max_requests` to a higher value, or to `None` for no limit."
+                )
+                self._warned = True
+            return [-1] * len(prompts)
+
+        # Shuffle the order of the completions to avoid positional bias
+        if shuffle_order:
+            flip_mask = np.random.choice([True, False], size=len(prompts))
+            completions = [pair[::-1] if flip else pair for flip, pair in zip(flip_mask, completions, strict=True)]
+
+        # Define a function to get the rank for a single prompt, will be called concurrently
+        def get_rank(prompt, candidates):
+            content = self.system_prompt.format(prompt=prompt, response0=candidates[0], response1=candidates[1])
+            messages = [{"role": "user", "content": content}]
+            completion = self.client.chat.completions.create(model=self.model, messages=messages, max_tokens=1)
+            response = completion.choices[0].message.content
+            if response in ["0", "1"]:
+                return int(response)
+            else:
+                logging.debug(f"Invalid response from the judge model: '{response}'. Returning -1.")
+                return -1
+
+        # Call the completions concurrently
+        with concurrent.futures.ThreadPoolExecutor() as executor:
+            ranks = list(executor.map(get_rank, prompts, completions))
+
+        # Flip back the ranks to the original order if needed
+        if shuffle_order:
+            ranks = [ranks[i] if not flip else 1 - ranks[i] for i, flip in enumerate(flip_mask)]
+
+        # Update the number of requests
+        self.num_requests += len(prompts)
+
+        # Return the ranks
+        return ranks
+
+
+class DeepSeekPairwiseJudge(BasePairwiseJudge):
+    """
+    Judge based on the DeepSeek API.
+
+    This judge is relevant for assessing the quality chat models, where the completion is a response to a given prompt.
+
+    Args:
+        model (`str`, *optional*, defaults to `"gpt-4-turbo-preview"`):
+            Model to use for the judge.
+        system_prompt (`str`, *optional*):
+            System prompt to be used for the judge. If not provided, a default prompt is used. Note that the system
+            prompt should contain the following placeholders: `{prompt}`, `{response0}`, and `{response1}`. Also, the
+            inference is called with `max_tokens=1`, consequently the system prompt should ask for a single token
+            response.
+        max_requests (`int` or `None`, *optional*, defaults to `1000`):
+            Maximum number of requests to make to the OpenAI API. If set to `None`, there is no limit.
+    """
+
+    def __init__(
+        self, system_prompt: str | None = None, max_requests: int | None = 1_000
+    ):
+        if not is_openai_available():
+            raise ValueError("OpenAI client is not installed. Please install it with 'pip install openai'.")
+        from openai import OpenAI
+        self.client = OpenAI(
+            api_key="",
+            base_url="https://api.deepseek.com")
+        self.model ="deepseek-chat"
         self.system_prompt = system_prompt or DEFAULT_PAIRWISE_SYSTEM_PROMPT
         self.max_requests = max_requests
         self.num_requests = 0
