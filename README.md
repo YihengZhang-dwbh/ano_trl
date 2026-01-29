@@ -52,7 +52,7 @@ This work has been submitted to ICML 2026. If you use our work, please cite as:
 ### 📚 BibTeX
 
 ```bibtex
-@inproceedings{Anonymous2026anon,
+@inproceedings{Anonymous2026ano,
   title     = {ANO: A Unified RL Framework for Robust Policy Optimization},
   author    = {Anonymous authors},
   booktitle = {International Conference on Machine Learning (ICML)},
