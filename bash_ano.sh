@@ -36,16 +36,15 @@ accelerate launch \
 end_time=$(date +%s)
 duration=$((end_time - start_time))
 
-# 计算小时、分钟、秒
 hours=$((duration / 3600))
 minutes=$(( (duration % 3600) / 60 ))
 seconds=$((duration % 60))
 
-printf "脚本运行时间: "
+printf "Running Time: "
 if [ $hours -gt 0 ]; then
-    printf "%02d小时 " $hours
+    printf "%02dH " $hours
 fi
 if [ $minutes -gt 0 ] || [ $hours -gt 0 ]; then
-    printf "%02d分钟 " $minutes
+    printf "%02dM " $minutes
 fi
-printf "%02d秒\n" $seconds
+printf "%02dS\n" $seconds
