@@ -1,7 +1,7 @@
 time=$(date '+%Y-%m-%d-%H%M%S')
 start_time=$(date +%s)
 
-source activate trl_dev
+source activate ano_trl
 
 
 id=3
