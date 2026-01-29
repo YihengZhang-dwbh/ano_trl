@@ -1,40 +1,66 @@
 # ANO: A Unified RL Framework for Robust Policy Optimization
-This repository provides the official implementation of **ANO**,  **Anchored Neighborhood Optimization**.
+
+Official implementation of **ANO (Anchored Neighborhood Optimization)**.
+> **Code Release:** This repository contains the reference implementation used in our experiments.
 
 ---
 
-## 📋 Environment Setup
+## 🔥 What is ANO?
 
-**Tested with:**
-- **OS:** Ubuntu 20.04  
-- **Python:** 3.8+  
-- **CUDA:** *(optional, recommended for LLM/diffusion experiments)*
+**Proximal Policy Optimization (PPO)** is widely used but faces a fundamental dilemma:
+- **Hard clipping** discards useful gradient information from outliers → hurts sample efficiency.
+- **Removing clipping** can lead to unbounded gradients → instability and hyper-parameter sensitivity.
 
-### 🔧 Step-by-step Installation
+**ANO** resolves this via a **Unified Trust Region Framework** and a new shaping principle: **redescending influence** — suppress extreme outliers smoothly while keeping informative gradients in moderately-off-policy regions.  It is designed to be **smooth**, **trust-region bounded**, **robust to outliers**, and **structurally minimal** (one convexity change).  
+
+---
+
+## ✅ Results at a Glance
+
+<p align="center">
+  <img src="assets/shaping.png" width="90%" />
+</p>
+<p align="center">
+  <img src="assets/mujoco_lr.png" width="90%" />
+</p>
+<p align="center">
+  <img src="assets/winrate.png" width="90%" />
+</p>
+
+---
+
+## 📦 Environment Setup
+
+- Experimental coverage (as in paper): **MuJoCo**, **Atari**, and **LLM fine-tuning (RLHF)**.
+
+**Tested with**
+- OS: Ubuntu 20.04
+- Python: 3.8+
+- CUDA: optional (recommended for large-scale / LLM experiments)
+
+### Clone & create Conda env
+
 ```bash
-# Clone the repository
-git clone https://github.com/xxxxxx
+git clone <YOUR_REPO_URL>
 cd ANO/
 
-# Create and activate Conda environment
 conda env create -f ano_trl.yml
 conda activate ano_trl
-
 ````
 
 ---
 
-## 🚀 Running Experiments
+## 🧪 Reproducing Experiments
 
-Use the following command to launch training:
+We provide **script entrypoints** for training and evaluation.
+
+### Training
 
 ```bash
 bash bash_ano.sh
 ```
 
-## 📊 Eval
-
-Use the following command to launch evaluation:
+### Evaluation
 
 ```bash
 bash judge.sh
@@ -42,14 +68,9 @@ bash judge.sh
 
 ---
 
-## 📎 Cite As
+## 📎 Citation
 
-This work has been submitted to ICML 2026. If you use our work, please cite as:
-
->Anonymous. ANO: A Unified RL Framework for Robust Policy Optimization. In The Forty-Third International Conference on Machine Learning (ICML 2026).
-
-
-### 📚 BibTeX
+If you use this codebase, please cite:
 
 ```bibtex
 @inproceedings{Anonymous2026ano,
@@ -64,11 +85,9 @@ This work has been submitted to ICML 2026. If you use our work, please cite as:
 
 ## 🙏 Acknowledgements
 
-This repository builds upon and uses code from the following excellent open-source projects. We sincerely thank their authors:
+This repository builds upon and uses code from:
 
-* [TRL](https://github.com/huggingface/trl) – TRL - Transformer Reinforcement Learning.
+* **TRL** (Transformer Reinforcement Learning): [https://github.com/huggingface/trl](https://github.com/huggingface/trl)
 
 Please refer to their licenses and cite them if you build upon their work.
-
----
 
