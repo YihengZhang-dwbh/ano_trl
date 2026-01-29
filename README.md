@@ -25,7 +25,7 @@ Official implementation of **ANO (Anchored Neighborhood Optimization)**.
 
 ## 📦 Environment Setup
 
-- Experimental coverage (as in paper): **MuJoCo**, **Atari**, and **LLM fine-tuning (RLHF)**.
+- Experimental coverage (as in paper): **LLM fine-tuning (RLHF)**.
 
 **Tested with**
 - OS: Ubuntu 20.04
