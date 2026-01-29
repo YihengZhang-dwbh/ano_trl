@@ -1,11 +1,21 @@
-time=$(date '+%Y-%m-%d-%H%M%S')
+temp=0
+step=500
+num=100
 
 source activate ano_trl
 
-export CUDA_VISIBLE_DEVICES=0
+export CUDA_VISIBLE_DEVICES=0,1
 
-python judge.py \
-    --model_a_path "models/minimal/ano_0.2_0.05_tldr_2026-01-13-115400/checkpoint-1000" \
-    --model_b_path "models/minimal/ppo_r" \
-    --num_examples 100 \
+ano=ano/checkpoint-$step
+ano_f=ano/
+
+ppo=ppo/checkpoint-$step
+ppo_f=ppo/
+
+python judge_tie.py \
+    --model_a_path $ano \
+    --model_b_path $ppo \
+    --num_examples $num \
+    --temperature $temp \
     --batch_size 16
+
