@@ -17,15 +17,9 @@ Official implementation of **ANO (Anchored Neighborhood Optimization)**.
 
 ## ✅ Results at a Glance
 
-<p align="center">
-  <img src="assets/shaping.png" width="90%" />
-</p>
-<p align="center">
-  <img src="assets/mujoco_lr.png" width="90%" />
-</p>
-<p align="center">
-  <img src="assets/winrate.png" width="90%" />
-</p>
+| Shape Function | Robustness Analysis | Win Rate |
+| :---: | :---: | :---: |
+| ![Performance 1](assets/shaping.png) | ![Performance 2](assets/mujoco_lr.png) | ![Performance 3](assets/winrate.png) |
 
 ---
 
