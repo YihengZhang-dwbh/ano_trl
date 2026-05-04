@@ -114,12 +114,9 @@ def _compute_ano_loss(
     f_val_neg = 2.0 - _ano_math_kernel(2 - ratio, k_neg, b_neg, c_neg)
     
     # 2. 统一计算 Loss = -Adv * Function_Value
-    # 这里利用 mask 选择对应的 function value (f_val)
-    # 如果 adv >= 0, 选 f_val_pos; 否则选 f_val_neg
     target_f_val = torch.where(mb_advantage >= 0, f_val_pos, f_val_neg)
     
     # 3. 最终 Loss
-    # 这种写法利用了算子融合，比分开写 loss_pos/loss_neg 更快
     loss = -mb_advantage * target_f_val
     
     return loss
