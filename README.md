@@ -56,9 +56,9 @@ bash bash_ano.sh
 
 ### Evaluation
 
-First, fill in the DeepSeek API key at line 437 of trl/experimental/judges/judges.py where it says api_key="". 
+First, fill in the DeepSeek API key at line 437 of trl/experimental/judges/judges.py where it says ```api_key=""```. 
 
-Then, in judge.sh, complete the paths to the locally fine-tuned models you saved: set ano="your_anon_checkpoint-step" and ppo="your_ppo_checkpoint-step".
+Then, in judge.sh, complete the paths to the locally fine-tuned models you saved: set ```ano="your_anon_checkpoint-step"``` and ```ppo="your_ppo_checkpoint-step"```.
 
 Finally
 
