@@ -1,4 +1,4 @@
-# ANO: A Unified RL Framework for Robust Policy Optimization
+# ANO: A Principled Approach to Robust Policy Optimization
 
 Official implementation of **ANO (Anchored Neighborhood Optimization)**.
 > **Code Release:** This repository contains the reference implementation used in our experiments.
@@ -11,7 +11,7 @@ Official implementation of **ANO (Anchored Neighborhood Optimization)**.
 - **Hard clipping** discards useful gradient information from outliers → hurts sample efficiency.
 - **Removing clipping** can lead to unbounded gradients → instability and hyper-parameter sensitivity.
 
-**ANO** resolves this via a **Unified Trust Region Framework** and a new shaping principle: **redescending influence** — suppress extreme outliers smoothly while keeping informative gradients in moderately-off-policy regions.  It is designed to be **smooth**, **trust-region bounded**, **robust to outliers**, and **structurally minimal** (one convexity change).  
+ANO resolves this via a Principled Design Space and a geometric shaping principle: **redescending influence** — suppress extreme outliers smoothly while keeping informative gradients in moderately-off-policy regions.  It is designed to be smooth, trust-region bounded, robust to outliers, and structurally parsimonious (requiring only one convexity change).
 
 ---
 
@@ -74,7 +74,7 @@ If you use this codebase, please cite:
 
 ```bibtex
 @inproceedings{Anonymous2026ano,
-  title     = {ANO: A Unified RL Framework for Robust Policy Optimization},
+  title     = {ANO: A Principled Approach to Robust Policy Optimization},
   author    = {Anonymous authors},
   booktitle = {},
   year      = {2026}
