@@ -70,7 +70,7 @@ If you use this codebase, please cite:
 @inproceedings{Anonymous2026ano,
   title     = {ANO: A Unified RL Framework for Robust Policy Optimization},
   author    = {Anonymous authors},
-  booktitle = {International Conference on Machine Learning (ICML)},
+  booktitle = {},
   year      = {2026}
 }
 ```
